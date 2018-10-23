@@ -41,7 +41,7 @@ public class PlayerGun : MonoBehaviour
 
     private int fireCount = 0;
 
-    private Vector3 targetLocation;
+    public Vector3 targetLocation { get; private set; }
     public bool aimEnabled = false;
     public LayerMask targetingMask;
 
@@ -50,6 +50,9 @@ public class PlayerGun : MonoBehaviour
 
     [SerializeField]
     private Transform playerCam;
+
+    [SerializeField]
+    private bool aimDisableOverride = true;
 
     protected virtual void OnFiringStart()
     {
@@ -103,7 +106,7 @@ public class PlayerGun : MonoBehaviour
         var hits = Physics.RaycastAll(playerCam.position, playerCam.forward, Mathf.Infinity, targetingMask);
         aimEnabled = hits.Length > 0;
 
-        if(aimEnabled)
+        if(aimEnabled && !aimDisableOverride)
         {
             targetLocation = hits[0].point;
             transform.LookAt(targetLocation);

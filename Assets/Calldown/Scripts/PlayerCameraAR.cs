@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.XR;
@@ -44,6 +45,18 @@ public class PlayerCameraAR : MonoBehaviour
     public void Start()
     {
         ScaleSession(_worldScale);
+        ARSubsystemManager.systemStateChanged += OnSystemStateChanged;
+        SystemStateChanged(ARSubsystemManager.systemState);
+    }
+
+    private void OnSystemStateChanged(ARSystemStateChangedEventArgs obj)
+    {
+        SystemStateChanged(obj.state);
+    }
+    private void SystemStateChanged(ARSystemState newState)
+    {
+        worldRoot.gameObject.SetActive(newState == ARSystemState.SessionTracking);
+
     }
 
     public void ScaleSession(float value)

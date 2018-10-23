@@ -14,6 +14,9 @@ public class DebugHUD : MonoBehaviour
     private Text cameraPosition;
 
     [SerializeField]
+    private Text cameraRotation;
+
+    [SerializeField]
     private Text sessionOriginPosition;
 
     [SerializeField]
@@ -32,18 +35,26 @@ public class DebugHUD : MonoBehaviour
     private Text worldRotation;
 
     [SerializeField]
+    private Text aimTarget;
+
+    [SerializeField]
     private PlayerCameraAR arCamera;
 
     [SerializeField]
     private ARSessionOrigin arSessionOrigin;
 
+    [SerializeField]
+    private PlayerGun gun;
+
     void Update()
     {
         systemStatus.text = ARSubsystemManager.systemState.ToString();
         cameraPosition.text = arCamera.transform.position.ToString();
+        cameraRotation.text = arCamera.transform.rotation.eulerAngles.ToString();
         sessionOriginPosition.text = arSessionOrigin.transform.position.ToString();
         playerScale.text = string.Format("1:{0}", arCamera.worldScale.ToString("0.00"));
         worldRotation.text = string.Format("{0}°", arCamera.worldRotation.ToString("0"));
+        aimTarget.text = gun.targetLocation.ToString();
     }
 
     public void ScaleSession(float value)
