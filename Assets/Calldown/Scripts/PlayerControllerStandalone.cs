@@ -10,10 +10,15 @@ public class PlayerControllerStandalone : MonoBehaviour
     [SerializeField]
     private PlayerGun[] guns;
 
+    private bool lockCursor = false;
+
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if(lockCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     void Update()

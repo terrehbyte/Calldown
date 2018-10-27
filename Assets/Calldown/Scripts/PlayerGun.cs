@@ -34,6 +34,9 @@ public class PlayerGun : MonoBehaviour
     private ParticleSystem fireParticles;
 
     [SerializeField]
+    private GameObject hitEffect;
+
+    [SerializeField]
     private AudioSource audioSource;
 
     [SerializeField]
@@ -66,6 +69,7 @@ public class PlayerGun : MonoBehaviour
 
     protected virtual void OnFiringStay()
     {
+        Vibration.Vibrate(100);
         OnShotFired.Invoke();
         audioSource.PlayOneShot(fireSounds[Random.Range(0, fireSounds.Length)]);
         fireCount++;
@@ -73,6 +77,21 @@ public class PlayerGun : MonoBehaviour
         if(fireCount % tracerInterval == 0)
         {
             fireParticles.Emit(1);
+        }
+
+        var hits = Physics.RaycastAll(playerCam.position, playerCam.forward, Mathf.Infinity, targetingMask);
+        aimEnabled = hits.Length > 0;
+
+        if(hits.Length > 0)
+        {
+            var baby = Instantiate(hitEffect, hits[0].point, Quaternion.identity);
+            baby.transform.up = hits[0].normal;
+
+            var damaged = hits[0].collider.GetComponent<IDamageable>();
+            if(damaged != null)
+            {
+                damaged.TakeDamage(10.0f);
+            }
         }
     }
 
@@ -85,7 +104,7 @@ public class PlayerGun : MonoBehaviour
     protected virtual void Awake()
     {
         OnIsFiringChanged.AddListener(InternalOnFireHandler);
-        initialRotation = transform.localRotation;
+        //initialRotation = transform.localRotation;
     }
 
     protected virtual void Update()
@@ -113,7 +132,8 @@ public class PlayerGun : MonoBehaviour
         }
         else
         {
-            transform.localRotation = Quaternion.RotateTowards(transform.localRotation,
+            return;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation,
                                                         initialRotation,
                                                         rateOfReturn * Time.deltaTime );
         }
