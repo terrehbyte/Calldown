@@ -10,21 +10,19 @@ public class PlayerControllerStandalone : MonoBehaviour
     [SerializeField]
     private PlayerGun[] guns;
 
+    [SerializeField]
     private bool lockCursor = false;
 
     void Start()
     {
-        if(lockCursor)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        AttemptCursorLock();
     }
 
     void Update()
     {
         if(Input.GetMouseButton(1))
         {
+            AttemptCursorLock();
             Vector3 posDelta = new Vector3(Input.GetAxisRaw("Horizontal"),
                                         Input.GetAxisRaw("Hover"),
                                         Input.GetAxisRaw("Vertical"));
@@ -39,9 +37,29 @@ public class PlayerControllerStandalone : MonoBehaviour
             locomotion.isSprinting = Input.GetButton("Sprint");
         }
 
-        foreach(var gun in guns)
+        if(Input.GetMouseButton(0))
+        {
+            AttemptCursorLock();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
+        foreach (var gun in guns)
         {
             gun.isFiring = Input.GetButton("Fire1");
+        }
+    }
+
+    private void AttemptCursorLock()
+    {
+        if (lockCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 }

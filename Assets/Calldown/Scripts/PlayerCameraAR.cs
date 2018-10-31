@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Experimental.XR;
 using UnityEngine.XR.ARFoundation;
 
@@ -10,7 +11,6 @@ public class PlayerCameraAR : MonoBehaviour
     [SerializeField]
     private ARSessionOrigin arSessionOrigin;
 
-    [SerializeField]
     private Transform worldRoot;
 
     private float _worldScale = 1.0f;
@@ -41,13 +41,7 @@ public class PlayerCameraAR : MonoBehaviour
 
     private Vector3 worldFakeLocation;
 
-
-    public void Start()
-    {
-        ScaleSession(_worldScale);
-        ARSubsystemManager.systemStateChanged += OnSystemStateChanged;
-        SystemStateChanged(ARSubsystemManager.systemState);
-    }
+    public bool contentPlaced { private set; get; }
 
     private void OnSystemStateChanged(ARSystemStateChangedEventArgs obj)
     {
@@ -56,7 +50,6 @@ public class PlayerCameraAR : MonoBehaviour
     private void SystemStateChanged(ARSystemState newState)
     {
         worldRoot.gameObject.SetActive(newState == ARSystemState.SessionTracking);
-
     }
 
     public void ScaleSession(float value)
@@ -78,5 +71,14 @@ public class PlayerCameraAR : MonoBehaviour
     {
         worldFakeLocation = newLocation;
         arSessionOrigin.MakeContentAppearAt(worldRoot, worldFakeLocation);
+        contentPlaced = true;
+    }
+
+    private void Start()
+    {
+        worldRoot = GameRoot.global.transform;
+        ScaleSession(_worldScale);
+        ARSubsystemManager.systemStateChanged += OnSystemStateChanged;
+        SystemStateChanged(ARSubsystemManager.systemState);
     }
 }
