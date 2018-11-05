@@ -43,6 +43,7 @@ public class NPCController : MonoBehaviour
 
         bool wasInDanger = inDanger;
 
+        inDanger = false;
         for(int i = 0; i < results; ++i)
         {
             var result = detectedColliders[i];

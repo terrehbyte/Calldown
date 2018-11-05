@@ -22,7 +22,7 @@ public class WaterGun : MonoBehaviour
 
     void Update()
     {
-        if (ARSubsystemManager.systemState != ARSystemState.SessionTracking) { return; }
+        if (!arCamera.readyToPlace) { return; }
 
         if(Input.touchCount > 1)
         {

@@ -76,22 +76,32 @@ public class PlayerGun : MonoBehaviour
 
         if(fireCount % tracerInterval == 0)
         {
-            fireParticles.Emit(1);
+            //fireParticles.Emit(1);
         }
 
         var hits = Physics.RaycastAll(playerCam.position, playerCam.forward, Mathf.Infinity, targetingMask);
         aimEnabled = hits.Length > 0;
 
-        if(hits.Length > 0)
-        {
-            var baby = Instantiate(hitEffect, hits[0].point, Quaternion.identity);
-            baby.transform.up = hits[0].normal;
+        if(hits.Length < 1) { return; }
 
-            var damaged = hits[0].collider.GetComponent<IDamageable>();
-            if(damaged != null)
+        int closestIndex = -1;
+        float closestDistance = Mathf.Infinity;
+        for(int i = 0; i < hits.Length; ++i)
+        {
+            if(hits[i].distance < closestDistance)
             {
-                damaged.TakeDamage(10.0f);
+                closestIndex = i;
+                closestDistance = hits[i].distance;
             }
+        }
+        var closestHit = hits[closestIndex];
+        //var baby = Instantiate(hitEffect, closestHit.point, Quaternion.identity);
+        //baby.transform.up = closestHit.normal;
+
+        var damaged = closestHit.collider.GetComponent<IDamageable>();
+        if(damaged != null)
+        {
+            damaged.TakeDamage(10.0f);
         }
     }
 

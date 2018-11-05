@@ -41,6 +41,7 @@ public class PlayerCameraAR : MonoBehaviour
 
     private Vector3 worldFakeLocation;
 
+    public bool readyToPlace { private set; get; }
     public bool contentPlaced { private set; get; }
 
     private void OnSystemStateChanged(ARSystemStateChangedEventArgs obj)
@@ -50,6 +51,11 @@ public class PlayerCameraAR : MonoBehaviour
     private void SystemStateChanged(ARSystemState newState)
     {
         worldRoot.gameObject.SetActive(newState == ARSystemState.SessionTracking);
+    }
+
+    private void OnPlaneAdded(PlaneAddedEventArgs obj)
+    {
+        readyToPlace = true;
     }
 
     public void ScaleSession(float value)
@@ -79,6 +85,7 @@ public class PlayerCameraAR : MonoBehaviour
         worldRoot = GameRoot.global.transform;
         ScaleSession(_worldScale);
         ARSubsystemManager.systemStateChanged += OnSystemStateChanged;
+        ARSubsystemManager.planeAdded += OnPlaneAdded;
         SystemStateChanged(ARSubsystemManager.systemState);
     }
 }

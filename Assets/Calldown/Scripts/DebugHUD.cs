@@ -46,6 +46,15 @@ public class DebugHUD : MonoBehaviour
     [SerializeField]
     private PlayerGun gun;
 
+    [SerializeField]
+    private Text readyStatus;
+
+    [SerializeField]
+    private Text placementStatus;
+
+    [SerializeField]
+    private Text frameTime;
+
     void Update()
     {
         systemStatus.text = ARSubsystemManager.systemState.ToString();
@@ -55,6 +64,9 @@ public class DebugHUD : MonoBehaviour
         playerScale.text = string.Format("1:{0}", arCamera.worldScale.ToString("0.00"));
         worldRotation.text = string.Format("{0}°", arCamera.worldRotation.ToString("0"));
         aimTarget.text = gun.targetLocation.ToString();
+        readyStatus.text = arCamera.readyToPlace ? "Ready" : "Not Ready";
+        placementStatus.text = arCamera.contentPlaced ? "Placed" : "Not Placed";
+        frameTime.text = (1.0f / Time.deltaTime).ToString("000");
     }
 
     public void ScaleSession(float value)
