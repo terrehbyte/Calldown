@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6303756171f28d045bf4bba7b18f6983, type: 3}
+  m_Name: DebugWave
+  m_EditorClassIdentifier: 
+  entries:
+  - enemy: {fileID: 1863631577957506, guid: 489198f513dff7e4eb5ca843c2014774, type: 2}
+    spawnCount: 10
+  - enemy: {fileID: 1863631577957506, guid: 79c9a44eae34a584697b35508f87bdfa, type: 2}
+    spawnCount: 3
