@@ -7,14 +7,18 @@ public class WaveDirector : MonoBehaviour
 {
     [Header("Configuration")]
     public WaveConfiguration[] waves;
-    public WaveConfiguration currentWaveConfig { get { return waves[currentWave]; } }
+    public WaveConfiguration currentWaveConfig { get { return waves[currentWave % waves.Length]; } }
     public int currentWave { get; private set; } = -1;
     public Transform[] spawners;
     public Transform nextSpawner {get; private set;}
+    public float waveRepeatMultiplier = 1.5f;
 
     [Header("Spawn Limits")]
     public int maxActiveEnemies = 20;
     private int currentActiveEnemies = 0;
+
+    [Range(0, 1.0f)]
+    public float spawnChanceBias = 0.0f;
 
     public float spawnInterval = 0.5f;
     private float spawnTimer = 0;
@@ -55,6 +59,7 @@ public class WaveDirector : MonoBehaviour
     public void StartNextWave()
     {
         currentWave++;
+        float spawnMultiplier = (currentWave / waves.Length) * waveRepeatMultiplier +  1;
 
         // repopulate spawn tables for next round
         spawnQueue.Clear();
@@ -76,7 +81,7 @@ public class WaveDirector : MonoBehaviour
 
             var newQueue = new WaveQueue();
             newQueue.enemyPrefab = entry;
-            newQueue.remainingCount = spawnTable[entry];
+            newQueue.remainingCount = Mathf.RoundToInt(spawnTable[entry] * spawnMultiplier);
             newQueue.spawnChance = (float)spawnTable[entry] / totalSpawns;
             newQueue.spawnThreshold = prevEntryChance + newQueue.spawnChance;
 
@@ -132,25 +137,28 @@ public class WaveDirector : MonoBehaviour
             squadWaitingToSpawn--;
 
             var selectedSpawner = nextSpawner;
-            float chance = Random.Range(0.0f, 1.0f);
+            float chance = Random.Range(0.0f, 1.0f) + spawnChanceBias;
 
-            GameObject candidatePrefab = null;
+            WaveQueue candidateSpawn = null;
 
             // select enemy to spawn
             foreach(var entry in spawnQueue)
             {
-                if(chance <= entry.spawnThreshold && entry.remainingCount > 0)
+                if(entry.spawnThreshold <= chance)
                 {
-                    candidatePrefab = entry.enemyPrefab;
-                    --entry.remainingCount;
-
-                    if(entry.remainingCount < 1)
-                    {
-                        spawnQueue.Remove(entry);
-                    }
+                    candidateSpawn = entry;
+                    continue;
+                }
+                else
+                {
+                    candidateSpawn = entry;
                     break;
                 }
             }
+
+            var candidatePrefab = candidateSpawn.enemyPrefab;
+            candidateSpawn.remainingCount--;
+            if(candidateSpawn.remainingCount < 1) { spawnQueue.Remove(candidateSpawn);}
 
             isSpawning = spawnQueue.Count > 0;
 

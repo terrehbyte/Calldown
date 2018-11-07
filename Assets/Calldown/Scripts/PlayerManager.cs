@@ -18,11 +18,11 @@ public class PlayerManager : MonoBehaviour
     {
         if(Application.isEditor && !forceAR)
         {
-            Instantiate(desktopController);
+            GameRoot.Instantiate(desktopController);
         }
         else
         {
-            Instantiate(arController);
+            GameRoot.Instantiate(arController);
         }
     }
 }
